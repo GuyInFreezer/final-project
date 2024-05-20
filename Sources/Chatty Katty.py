@@ -3,19 +3,11 @@ from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import os
 import json
-from langchain.agents import initialize_agent, load_tools
+from langchain.agents import load_tools
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
-import warnings
 from langchain.memory import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
-
-# Suppress specific deprecation warning
-warnings.filterwarnings(
-    "ignore",
-    message=".*Importing GuardrailsOutputParser from langchain.output_parsers is deprecated.*",
-    category=DeprecationWarning,
-)
 
 # Load environment variables.
 load_dotenv()
@@ -44,7 +36,7 @@ tools = load_tools(['wikipedia', "openweathermap-api"])
 #agent = initialize_agent(tools, verbose=False, handle_parsing_errors = True, max_iterations=10, llm=llm)
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are a helpful buddy who helps walking people motivated. Make sure to use openweathermap-api for weather-related questions and wikipedia for grabbing information."),
+        ("system", "Your name is Chatty Katty, also called Katty or Kat. You are a helpful buddy who helps walking people motivated. Make sure to use openweathermap-api for weather-related questions and wikipedia for grabbing information, but don't be too verbose."),
         ("placeholder", "{chat_history}"),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
@@ -59,6 +51,9 @@ def answer(query):
     result = llm.invoke(CONTEXT + query)
     return result.content
     # Add whisper content here when done
+
+def agent_answer(query):
+    return agent_executor.invoke({"input":query}, config={"configurable": {"session_id": "ck-session"}})['output']
 
 # Loads saves. If save doesn't exist, initialize
 def load_save():
@@ -160,7 +155,13 @@ def check_weather():
     q = f"What is the current weather at {CITY},{STATE}?"
     weather = agent_executor.invoke({"input": q}, config={"configurable": {"session_id": "ck-session"}})['output']
     query = f"I have the weather data as such for my city: '{weather}.' Recommend me to walk outside if the weather is nice, and vice versa. I don't need any verbose information about the weather itself though."
-    return answer(query)
+    print(answer(query))
+    return 1
+
+def ask_walk():
+    answer = input("Do you want to walk today? ")
+    if answer.lower() == 'no':
+        exit_chatty()
 
 def chat():
     prompt = ""
@@ -176,7 +177,8 @@ def exit_chatty():
 
 def main():
     load_save()
-    print(check_weather())
+    check_weather()
+    ask_walk()
     chat()
     exit_chatty()
     return 0
