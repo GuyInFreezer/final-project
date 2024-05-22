@@ -59,9 +59,9 @@ agent_executor = RunnableWithMessageHistory(agent_e, lambda session_id: memory, 
 def tts(text):
     tts = gTTS(text=text, lang='en')
     filename = 'output.mp3'
+    os.remove(filename)
     tts.save(filename)
     playsound(filename)
-    os.remove(filename)
 
 def answer(query):
     result = llm.invoke(CONTEXT + query)
@@ -87,12 +87,16 @@ def load_save():
         STEP = int(data['steps'])
         CONTEXT = f"My name is {NAME}, I live in {CITY}, {STATE}. I have taken {STEP} steps so far.\n"
         print(answer(f"Please greet me for coming back and comment on the amount of steps that I have taken so far."))
+        print('\n')
     else:
         print("Save file does not exist!\nCreating a new file!")
+        print('\n')
         name = str(input(answer("Please greet the new user and ask their name, in First Last format")))
+        print('\n')
         first_name = name.split(' ')[0]
         last_name = name.split(' ')[1]
         citystate = str(input(answer(f"Please ask {first_name} the city and state they live in, and tell them that the format to type has to be in city,state format with no space.")))
+        print('\n')
         city = citystate.split(',')[0]
         state = citystate.split(',')[1]
         states = {
@@ -157,6 +161,7 @@ def load_save():
         if len(state) == 2:
             state = states[state]
         print(answer(f"Thank {first_name} for providing their city and state, which is {city} and {state}. Compliment {first_name} on where they live as well."))
+        print('\n')
         jstring = {'name':name, 'first_name':first_name, 'last_name':last_name, 'city':city, 'state':state, 'steps':0}
         with open(SAVE_PATH, 'w') as f:
             json.dump(jstring, f, indent = 4)
@@ -168,6 +173,7 @@ def load_save():
         STEP = int(data['steps'])
         CONTEXT = f"My name is {NAME}, I live in {CITY}, {STATE}. I have taken {STEP} steps so far.\n"
         print(answer(f"Let {first_name} know that the initial setup is complete."))
+        print('\n')
     return 1
 
 def check_weather():
@@ -175,12 +181,15 @@ def check_weather():
     weather = agent_executor.invoke({"input": q}, config={"configurable": {"session_id": "ck-session"}})['output']
     query = f"I have the weather data as such for my city: '{weather}.' Recommend me to walk outside if the weather is nice, and vice versa. I don't need any verbose information about the weather itself though."
     print(answer(query))
+    print('\n')
     return 1
 
 def ask_walk():
     ans = input("Do you want to walk today? ")
+    print('\n')
     if ans.lower() == 'no':
         print(answer(f'Comment about how unfortunate it is that {NAME} decided not to walk today and wish them well.'))
+        print('\n')
         quit()
 
 def chat():
@@ -188,19 +197,23 @@ def chat():
     agent_executor.invoke({"input":CONTEXT + "Just remember these and don't do anything about it."}, config={"configurable": {"session_id": "ck-session"}})
     while prompt != "exit":
         prompt = input("Say to Chatty Kathy: ")
+        print('\n')
         if prompt != "exit":
-            print(agent_executor.invoke({"input":prompt}, config={"configurable": {"session_id": "ck-session"}})['output'])
+            print(agent_answer(prompt))
+            print('\n')
     return 0
 
 def exit_chatty():
     global STEP
     more_steps = int(input("How many steps have you taken today?"))
+    print('\n')
     f = open(SAVE_PATH)    
     data = json.load(f)  
     jstring = {'name':data['name'], 'first_name':data['first_name'], 'last_name':data['last_name'], 'city':data['city'], 'state':data['state'], 'steps':STEP + more_steps}
     with open(SAVE_PATH, 'w') as f:
         json.dump(jstring, f, indent = 4)
     print(answer(f"Please comment on the steps taken today, which is {more_steps}. Also comment on the total steps taken so far, which is {STEP + more_steps}. Also say goodbye to {NAME}"))
+    print('\n')
     quit()
 
 def main():
