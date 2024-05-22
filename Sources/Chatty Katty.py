@@ -8,6 +8,14 @@ from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.memory import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+import logging
+from playsound import playsound #pip install playsound
+import warnings
+from gtts import gTTS
+
+# Disable all non-print statements other than critical errors
+logging.basicConfig(level=logging.CRITICAL)
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 
 # Load environment variables.
 load_dotenv()
@@ -18,6 +26,7 @@ OPENAI_MODEL = "ft:gpt-3.5-turbo-0125:personal::9RlcUGDt"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Define save path
 SAVE_PATH = './save.json'
+AUDIO_PATH = './output.mp3'
 
 #Placeholders for Information
 NAME = ""
@@ -27,16 +36,12 @@ STEP = 0
 CONTEXT = ""
 
 # Create LLM
-#llm = OpenAI(api_key=OPENAI_API_KEY)
-llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model_name=OPENAI_MODEL, temperature=0.3)
-
-# HERE
+llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model_name=OPENAI_MODEL, temperature=0.5)
 
 memory = ChatMessageHistory(session_id = 'ck-session')
 # Init tools to use
 tools = load_tools(['wikipedia', "openweathermap-api"])
 # Init agent
-#agent = initialize_agent(tools, verbose=False, handle_parsing_errors = True, max_iterations=10, llm=llm)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """Your name is Chatty Katty, also called Katty or Kat. You are a helpful buddy who helps walking people motivated. 
@@ -51,13 +56,23 @@ agent = create_tool_calling_agent(llm, tools, prompt)
 agent_e = AgentExecutor(agent= agent, tools= tools, verbose=False)
 agent_executor = RunnableWithMessageHistory(agent_e, lambda session_id: memory, input_messages_key='input', history_messages_key='chat_history')
 
+def tts(text):
+    tts = gTTS(text=text, lang='en')
+    filename = 'output.mp3'
+    tts.save(filename)
+    playsound(filename)
+    os.remove(filename)
+
 def answer(query):
     result = llm.invoke(CONTEXT + query)
+    tts(result.content)
     return result.content
     # Add whisper content here when done
 
 def agent_answer(query):
-    return agent_executor.invoke({"input":query}, config={"configurable": {"session_id": "ck-session"}})['output']
+    result = agent_executor.invoke({"input":query}, config={"configurable": {"session_id": "ck-session"}})['output']
+    tts(result)
+    return result
 
 # Loads saves. If save doesn't exist, initialize
 def load_save():
@@ -163,9 +178,10 @@ def check_weather():
     return 1
 
 def ask_walk():
-    answer = input("Do you want to walk today? ")
-    if answer.lower() == 'no':
-        exit_chatty()
+    ans = input("Do you want to walk today? ")
+    if ans.lower() == 'no':
+        print(answer(f'Comment about how unfortunate it is that {NAME} decided not to walk today and wish them well.'))
+        quit()
 
 def chat():
     prompt = ""
