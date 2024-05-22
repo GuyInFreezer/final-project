@@ -13,7 +13,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 load_dotenv()
 
 # Set the model name for our LLMs.
-OPENAI_MODEL = "gpt-3.5-turbo"
+OPENAI_MODEL = "ft:gpt-3.5-turbo-0125:personal::9RlcUGDt"
 # Store the API key in a variable.
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Define save path
@@ -27,7 +27,10 @@ STEP = 0
 CONTEXT = ""
 
 # Create LLM
+#llm = OpenAI(api_key=OPENAI_API_KEY)
 llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model_name=OPENAI_MODEL, temperature=0.3)
+
+# HERE
 
 memory = ChatMessageHistory(session_id = 'ck-session')
 # Init tools to use
@@ -36,7 +39,8 @@ tools = load_tools(['wikipedia', "openweathermap-api"])
 #agent = initialize_agent(tools, verbose=False, handle_parsing_errors = True, max_iterations=10, llm=llm)
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "Your name is Chatty Katty, also called Katty or Kat. You are a helpful buddy who helps walking people motivated. Make sure to use openweathermap-api for weather-related questions and wikipedia for grabbing information, but don't be too verbose."),
+        ("system", """Your name is Chatty Katty, also called Katty or Kat. You are a helpful buddy who helps walking people motivated. 
+         Make sure to use openweathermap-api for weather-related questions and wikipedia for grabbing information, but don't be too verbose."""),
         ("placeholder", "{chat_history}"),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
