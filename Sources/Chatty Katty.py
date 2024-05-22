@@ -177,6 +177,14 @@ def chat():
     return 0
 
 def exit_chatty():
+    global STEP
+    more_steps = int(input("How many steps have you taken today?"))
+    f = open(SAVE_PATH)    
+    data = json.load(f)  
+    jstring = {'name':data['name'], 'first_name':data['first_name'], 'last_name':data['last_name'], 'city':data['city'], 'state':data['state'], 'steps':STEP + more_steps}
+    with open(SAVE_PATH, 'w') as f:
+        json.dump(jstring, f, indent = 4)
+    print(answer(f"Please comment on the steps taken today, which is {more_steps}. Also comment on the total steps taken so far, which is {STEP + more_steps}. Also say goodbye to {NAME}"))
     quit()
 
 def main():
