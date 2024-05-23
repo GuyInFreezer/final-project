@@ -1,9 +1,5 @@
 # final-project
 
-Sure! Here's a comprehensive README file for your project:
-
----
-
 # Chatty Kathy AI Workout Companion
 
 ## Table of Contents
