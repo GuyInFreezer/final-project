@@ -64,7 +64,10 @@ def tts(text):
     except:
         a = 0 # Don't do anything
     tts.save(filename)
-    playsound(filename)
+    try:
+        playsound(filename)
+    except:
+        print("**Failed to play audio because playsound is up to something silly.**")
 
 def answer(query):
     result = llm.invoke(CONTEXT + query)
@@ -98,7 +101,7 @@ def load_save():
         print('\n')
         first_name = name.split(' ')[0]
         last_name = name.split(' ')[1]
-        citystate = str(input(answer(f"Please ask {first_name} the city and state they live in, and tell them that the format to type has to be in city,state format with no space.")))
+        citystate = str(input(answer(f"Please ask {first_name} the city and state they live in, and tell them that the format to type has to be in city,state format with no space. Please don't cut any contents from this.")))
         print('\n')
         city = citystate.split(',')[0]
         state = citystate.split(',')[1]
