@@ -74,7 +74,7 @@ Chatty Kathy is an AI-powered workout companion platform designed to provide per
 - **Documents/**: Contains Presentation.
 - **Images/**: Contains images if used in README.
 - **Resources/**: Contains scripts and jsonl.
--**Sources/**: Contains codes.
+- **Sources/**: Contains codes.
 - **README.md**: Project overview and documentation.
 - **.gitignore**: List of files and directories to be ignored by Git.
 
