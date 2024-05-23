@@ -59,7 +59,10 @@ agent_executor = RunnableWithMessageHistory(agent_e, lambda session_id: memory, 
 def tts(text):
     tts = gTTS(text=text, lang='en')
     filename = 'output.mp3'
-    os.remove(filename)
+    try:
+        os.remove(filename)
+    except:
+        a = 0 # Don't do anything
     tts.save(filename)
     playsound(filename)
 
