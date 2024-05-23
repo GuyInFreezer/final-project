@@ -35,10 +35,9 @@ Chatty Kathy is an AI-powered workout companion platform designed to provide per
 - **Python:** Programming language for data processing and model implementation.
 - **Jupyter Notebook:** Environment for data analysis and model training.
 - **OpenAI GPT-3.5:** Used for generating synthetic data.
-- **scikit-learn:** Machine learning library for model development and evaluation.
-- **pandas:** Data manipulation library.
-- **NumPy:** Numerical computing library.
+- **gTTS:** Used for Text-to-Speech.
 - **dotenv:** For managing environment variables securely.
+- **playsound:** Used to play the TTS audio file.
 
 ## Data Collection and Preparation
 ### Data Sources
@@ -66,20 +65,18 @@ Chatty Kathy is an AI-powered workout companion platform designed to provide per
 ### Evaluation Metrics
 - Continuous evaluation using various metrics to track performance improvements.
 ### Documentation
-- Detailed records of the optimization process documented in CSV, Excel, and Python scripts.
+- Detailed records of the optimization process documented in Python script.
 
 ## Model Performance
-- Final performance metrics are based on accuracy, precision, recall, and other relevant metrics demonstrating the model’s effectiveness.
+- Final performance metrics are based on mostly training loss, which is measured by MSE (Mean Squared Error).
 
 ## GitHub Repository Structure
-- **src/**: Source code for data processing and model training.
-- **data/**: Synthetic data used for training and testing.
-- **notebooks/**: Jupyter notebooks for data analysis and model training.
-- **models/**: Trained model files.
-- **results/**: Evaluation metrics and performance results.
+- **Documents/**: Contains Presentation.
+- **Images/**: Contains images if used in README.
+- **Resources/**: Contains scripts and jsonl.
+-**Sources/**: Contains codes.
 - **README.md**: Project overview and documentation.
 - **.gitignore**: List of files and directories to be ignored by Git.
-- **requirements.txt**: List of dependencies and libraries required to run the project.
 
 ## Future Work
 - **Expand Dataset:** Incorporate more diverse and representative synthetic data.
@@ -102,26 +99,19 @@ Chatty Kathy is an AI-powered workout companion platform designed to provide per
    git clone https://github.com/your-repo/ChattyKathy.git
    cd ChattyKathy
    ```
-2. **Create a virtual environment and activate it:**
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-   ```
-3. **Install dependencies:**
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. **Set up environment variables:**
-   - Create a `.env` file in the root directory with your OpenAI API key.
+2. **Set up environment variables:**
+   - Create a `.env` file in the root directory with your OpenAI API key and OpenWeather Map API key.
    ```env
    OPENAI_API_KEY=your-openai-api-key
+   OPENWEATHERMAP_API_KEY = your-owm-api-key
    ```
 
 ## Usage
-- **Run Jupyter Notebook:**
+- **Main Program - Run Chatty Katty.py:**
    ```sh
-   jupyter notebook
+   python "Chatty Katty.py"
    ```
+- **Utility - Run via Jupyter Notebook**
 - Open the notebook in your browser and follow the steps to preprocess data, train the model, and evaluate performance.
 
 ## License
